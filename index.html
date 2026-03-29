@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sproglig Transkript — Live German Class Notes</title>
+  <meta name="description" content="Real-time transcription app for German classes with multilingual support" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Top Navigation Bar -->
+    <header id="topbar">
+      <div class="topbar-left">
+        <div class="logo">
+          <span class="logo-de">DE</span>
+          <span class="logo-text">Sproglig Transkript</span>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div id="session-timer" class="session-timer">
+          <span id="timer-display">00:00:00</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="btn-export" class="btn-outline" title="Exportar transcripción" disabled>
+          Exportar
+        </button>
+        <button id="btn-settings" class="btn-outline" title="Configuración">
+          Ajustes
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+      <!-- Left: Transcript Area -->
+      <section id="transcript-section">
+        <!-- Session Info Bar -->
+        <div id="session-info" class="session-info">
+          <div class="session-date">
+            <span id="session-date-text"></span>
+          </div>
+          <div class="language-switcher">
+            <button id="btn-lang-de" class="lang-btn active" data-lang="de-DE" title="Deutsch (Alt+1)">
+              <span class="lang-label">Alemania - DE</span>
+            </button>
+            <button id="btn-lang-es" class="lang-btn" data-lang="es-MX" title="Español (Alt+2)">
+              <span class="lang-label">España - ES</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Transcript Container -->
+        <div id="transcript-container" class="transcript-container">
+          <div id="transcript-empty" class="transcript-empty">
+            <h2 class="serif-title">Sproglig Transkript</h2>
+            <p>Selecciona una opción o presiona <strong>Iniciar</strong> para comenzar.</p>
+            <p class="hint">Usa <kbd>Alt+1</kbd> para Alemán · <kbd>Alt+2</kbd> para Español · <kbd>Space</kbd> para Pausar</p>
+          </div>
+          <div id="transcript-content" class="transcript-content" style="display:none;"></div>
+          <div id="interim-text" class="interim-text" style="display:none;"></div>
+        </div>
+
+        <!-- Control Bar -->
+        <div id="control-bar" class="control-bar">
+          <div class="controls-left">
+            <div id="recording-indicator" class="recording-indicator hidden">
+              <span class="pulse-dot"></span>
+              <span class="rec-label">REC</span>
+            </div>
+            <div id="mic-level-container" class="mic-level-container hidden">
+              <div id="mic-level-bar" class="mic-level-bar"></div>
+            </div>
+            <span id="engine-status" class="engine-status"></span>
+          </div>
+          <div class="controls-center">
+            <button id="btn-start" class="btn-primary btn-control" title="Iniciar transcripción">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+                <path d="M19 10v1a7 7 0 0 1-14 0v-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="12" y1="19" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span>Iniciar</span>
+            </button>
+            <button id="btn-pause" class="btn-secondary btn-control" title="Pausar (Space)" disabled>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                <rect x="14" y="4" width="4" height="16" rx="1"/>
+              </svg>
+              <span>Pausar</span>
+            </button>
+            <button id="btn-stop" class="btn-danger btn-control" title="Detener sesión" disabled>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+              </svg>
+              <span>Detener</span>
+            </button>
+            <button id="btn-pip" class="btn-secondary btn-control hidden" title="Mini Ventana (PiP)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <path d="M12 11h7v6h-7z"/>
+              </svg>
+              <span>Mini</span>
+            </button>
+          </div>
+          <div class="controls-right">
+            <span id="word-count" class="word-count">0 palabras</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Summary Sidebar -->
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <h3>Resúmenes</h3>
+          <button id="btn-toggle-sidebar" class="btn-icon btn-icon-sm" title="Cerrar panel">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+        </div>
+        <div id="summary-list" class="summary-list">
+          <div class="summary-empty">
+            <p>Los resúmenes aparecerán aquí cada vez que pauses la grabación.</p>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <h3>Exportar Transcripción</h3>
+        <div class="export-options">
+          <button id="export-txt" class="export-btn">
+            <span>Texto plano (.txt)</span>
+          </button>
+          <button id="export-md" class="export-btn">
+            <span>Markdown (.md)</span>
+          </button>
+          <button id="export-json" class="export-btn">
+            <span>JSON (Notion-ready)</span>
+          </button>
+        </div>
+        <button id="export-close" class="btn-secondary modal-close">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <h3>Configuración</h3>
+        <div class="settings-group">
+          <label for="setting-autosave">Auto-guardado (segundos)</label>
+          <input type="number" id="setting-autosave" value="10" min="5" max="60" />
+        </div>
+        <div class="settings-group">
+          <label for="setting-fontsize">Tamaño de fuente</label>
+          <select id="setting-fontsize">
+            <option value="14">Pequeña</option>
+            <option value="16" selected>Normal</option>
+            <option value="18">Grande</option>
+            <option value="20">Extra Grande</option>
+          </select>
+        </div>
+        <div class="settings-group">
+          <label>
+            <input type="checkbox" id="setting-timestamps" checked />
+            Mostrar timestamps
+          </label>
+        </div>
+        <div class="settings-group">
+          <label>
+            <input type="checkbox" id="setting-autoscroll" checked />
+            Auto-scroll al transcribir
+          </label>
+        </div>
+        <div class="settings-actions">
+          <button id="settings-save" class="btn-primary">Guardar</button>
+          <button id="settings-close" class="btn-secondary">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
