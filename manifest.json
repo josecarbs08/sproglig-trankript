@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Klasse Transkript Global Shortcuts",
+  "version": "1.0",
+  "description": "Atajos globales (Alt+1, Alt+2) para el proyecto de transcripción.",
+  "permissions": ["tabs"],
+  "host_permissions": [
+    "http://localhost:5173/*",
+    "http://localhost:5174/*",
+    "https://*.vercel.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "https://*.vercel.app/*"
+      ],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "set-lang-de": {
+      "suggested_key": {
+        "default": "Alt+1"
+      },
+      "description": "Cambiar idioma a Alemán"
+    },
+    "set-lang-es": {
+      "suggested_key": {
+        "default": "Alt+2"
+      },
+      "description": "Cambiar idioma a Español"
+    },
+    "toggle-recording": {
+      "suggested_key": {
+        "default": "Alt+Space"
+      },
+      "description": "Iniciar/Pausar transcripción"
+    }
+  }
+}
